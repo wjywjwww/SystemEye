@@ -7,8 +7,9 @@
 //
 
 import Foundation
+//import UIKit
 
-@objc public protocol FPSDelegate: class {
+@objc public protocol FPSDelegate: AnyObject {
     @objc optional func fps(fps:FPS, currentFPS:Double)
 }
 
@@ -22,14 +23,15 @@ open class FPS: NSObject {
     
     public override init() {
         super.init()
+        
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(FPS.applicationWillResignActiveNotification),
-                                               name: NSNotification.Name.UIApplicationWillResignActive,
+                                               name: UIApplication.willResignActiveNotification,
                                                object: nil)
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(FPS.applicationDidBecomeActiveNotification),
-                                               name: NSNotification.Name.UIApplicationDidBecomeActive,
+                                               name: UIApplication.didBecomeActiveNotification,
                                                object: nil)
     }
     
@@ -83,7 +85,7 @@ open class FPS: NSObject {
     private lazy var displayLink:CADisplayLink = { [unowned self] in
         let new = CADisplayLink(target: self, selector: #selector(FPS.displayLinkHandler))
         new.isPaused = true
-        new.add(to: RunLoop.main, forMode: .commonModes)
+        new.add(to: RunLoop.main, forMode: .common)
         return new
     }()
     
